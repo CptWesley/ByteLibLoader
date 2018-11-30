@@ -5,13 +5,21 @@ jobs:
       - image: microsoft/dotnet:2.1-sdk-alpine
     steps:
       - checkout
+      - run:
+          name: Dependencies
+          command: |
+                   cd src
+                   dotnet restore
+      - run:
+          name: Tests
+          command: |
+                   cd src
+                   dotnet test ByteLibLoader.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=bin/
   docker-debian:
     docker:
       - image: microsoft/dotnet:2.1-sdk-stretch
     steps:
       - checkout
-  build:
-    steps:
       - run:
           name: Dependencies
           command: |
@@ -27,8 +35,6 @@ workflows:
   test-alpine:
     jobs:
       - docker-alpine
-      - build
   test-debian:
     jobs:
       - docker-debian
-      - build
