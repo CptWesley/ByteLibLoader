@@ -59,38 +59,38 @@ namespace ByteLibLoader.PlatformLoaders
             }
         }
 
-        private class NativeMethods
+        private static class NativeMethods
         {
-            public const long __NR_memfd_create = 319;
-            public const int O_RDWR = 2;
-            public const int O_CREAT = 64;
-            public const int S_IRWXU = 448;
-            public const int MFD_CLOEXEC = 1;
-            public const int RTLD_NOW = 2;
+            internal const long __NR_memfd_create = 319;
+            internal const int O_RDWR = 2;
+            internal const int O_CREAT = 64;
+            internal const int S_IRWXU = 448;
+            internal const int MFD_CLOEXEC = 1;
+            internal const int RTLD_NOW = 2;
 
             [DllImport("librt")]
-            public static extern int shm_open([MarshalAs(UnmanagedType.LPStr)]string name, int flag, int mode);
+            internal static extern int shm_open([MarshalAs(UnmanagedType.LPStr)]string name, int flag, int mode);
 
             [DllImport("libc")]
-            public static extern int syscall(long id, [MarshalAs(UnmanagedType.LPStr)]string name, uint flags);
+            internal static extern int syscall(long id, [MarshalAs(UnmanagedType.LPStr)]string name, uint flags);
 
             [DllImport("libc")]
-            public static extern int write(int fileDescriptor, byte[] data, int count);
+            internal static extern int write(int fileDescriptor, byte[] data, int count);
 
             [DllImport("libc")]
-            public static extern int getpid();
+            internal static extern int getpid();
 
             [DllImport("libdl")]
-            public static extern IntPtr dlsym(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)]string symbol);
+            internal static extern IntPtr dlsym(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)]string symbol);
 
             [DllImport("libdl")]
-            public static extern IntPtr dlopen([MarshalAs(UnmanagedType.LPStr)]string fileName, int flag);
+            internal static extern IntPtr dlopen([MarshalAs(UnmanagedType.LPStr)]string fileName, int flag);
 
             [DllImport("libdl.so.2", EntryPoint = "dlopen")]
-            public static extern IntPtr dlopen2([MarshalAs(UnmanagedType.LPStr)]string fileName, int flag);
+            internal static extern IntPtr dlopen2([MarshalAs(UnmanagedType.LPStr)]string fileName, int flag);
 
             [DllImport("libdl.so.2", EntryPoint = "dlsym")]
-            public static extern IntPtr dlsym2(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)]string symbol);
+            internal static extern IntPtr dlsym2(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)]string symbol);
         }
     }
 }
