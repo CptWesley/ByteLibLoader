@@ -37,3 +37,7 @@ workflows:
   test-debian:
     jobs:
       - docker-debian
+  test-linux:
+    requires:
+      - test-alpine
+      - test-debian
