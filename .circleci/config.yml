@@ -31,13 +31,11 @@ jobs:
       - tests
 workflows:
   version: 2.1
-  test-alpine:
+  linux-builds:
     jobs:
       - docker-alpine
-  test-debian:
-    jobs:
       - docker-debian
-  test-linux:
-    requires:
-      - test-alpine
-      - test-debian
+      - all-pass:
+        requires:
+          - test-alpine
+          - test-debian
