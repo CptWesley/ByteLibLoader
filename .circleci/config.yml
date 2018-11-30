@@ -4,13 +4,14 @@ jobs:
     docker:
       - image: microsoft/dotnet:2.1-sdk-alpine
     steps:
+      - checkout
   docker-debian:
     docker:
       - image: microsoft/dotnet:2.1-sdk-stretch
     steps:
+      - checkout
   build:
     steps:
-      - checkout
       - run:
           name: Dependencies
           command: |
