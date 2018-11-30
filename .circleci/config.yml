@@ -35,7 +35,3 @@ workflows:
     jobs:
       - docker-alpine
       - docker-debian
-      - all-pass:
-        requires:
-          - test-alpine
-          - test-debian
