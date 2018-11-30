@@ -15,7 +15,3 @@ jobs:
           command: |
                    cd src
                    dotnet test ByteLibLoader.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=bin/
-      - run:
-          name: Codecov
-          command: |
-                   bash <(curl -s https://codecov.io/bash) -f "src/ByteLibLoader.Tests/bin/coverage.opencover.xml" -t $CODECOV_KEY
