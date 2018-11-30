@@ -3,9 +3,11 @@ jobs:
   docker-alpine:
     docker:
       - image: microsoft/dotnet:2.1-sdk-alpine
+    steps:
   docker-debian:
     docker:
       - image: microsoft/dotnet:2.1-sdk-stretch
+    steps:
   build:
     steps:
       - checkout
