@@ -21,6 +21,14 @@ namespace ByteLibLoader
             => _loader.Load(library);
 
         /// <summary>
+        /// Unloads the specified library.
+        /// </summary>
+        /// <param name="library">The pointer to the library to unload.</param>
+        /// <returns>True if succesful, false otherwise.</returns>
+        public static bool Unload(IntPtr library)
+            => _loader.Unload(library);
+
+        /// <summary>
         /// Finds a pointer to the symbol with a certain name.
         /// </summary>
         /// <param name="library">Pointer to the library to look in.</param>

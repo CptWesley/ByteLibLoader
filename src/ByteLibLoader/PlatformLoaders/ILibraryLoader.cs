@@ -15,6 +15,13 @@ namespace ByteLibLoader.PlatformLoaders
         IntPtr Load(byte[] library);
 
         /// <summary>
+        /// Unloads the specified library.
+        /// </summary>
+        /// <param name="library">The pointer to the library to unload.</param>
+        /// <returns>True if succesful, false otherwise.</returns>
+        bool Unload(IntPtr library);
+
+        /// <summary>
         /// Finds a pointer to the symbol with a certain name.
         /// </summary>
         /// <param name="library">Pointer to the library to look in.</param>

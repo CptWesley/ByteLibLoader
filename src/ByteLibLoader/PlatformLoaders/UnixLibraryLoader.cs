@@ -54,6 +54,23 @@ namespace ByteLibLoader.PlatformLoaders
         }
 
         /// <inheritdoc/>
+        public bool Unload(IntPtr library)
+        {
+            int result;
+            try
+            {
+                result = NativeMethods.dlclose(library);
+            }
+            catch (DllNotFoundException)
+            {
+                // Some distributions require "libc6-dev" for "libdl" to be able to be resolved, but they might know "libdl.so.2".
+                result = NativeMethods.dlclose2(library);
+            }
+
+            return result == 0;
+        }
+
+        /// <inheritdoc/>
         public IntPtr GetSymbol(IntPtr library, string symbol)
         {
             try
@@ -92,13 +109,19 @@ namespace ByteLibLoader.PlatformLoaders
             internal static extern int getpid();
 
             [DllImport("libdl")]
-            internal static extern IntPtr dlsym(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)]string symbol);
+            internal static extern IntPtr dlopen([MarshalAs(UnmanagedType.LPStr)]string fileName, int flag);
 
             [DllImport("libdl")]
-            internal static extern IntPtr dlopen([MarshalAs(UnmanagedType.LPStr)]string fileName, int flag);
+            internal static extern int dlclose(IntPtr handle);
+
+            [DllImport("libdl")]
+            internal static extern IntPtr dlsym(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)]string symbol);
 
             [DllImport("libdl.so.2", EntryPoint = "dlopen")]
             internal static extern IntPtr dlopen2([MarshalAs(UnmanagedType.LPStr)]string fileName, int flag);
+
+            [DllImport("libdl.so.2", EntryPoint = "dlclose")]
+            internal static extern int dlclose2(IntPtr handle);
 
             [DllImport("libdl.so.2", EntryPoint = "dlsym")]
             internal static extern IntPtr dlsym2(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)]string symbol);

@@ -15,6 +15,12 @@ namespace ByteLibLoader.PlatformLoaders
         }
 
         /// <inheritdoc/>
+        public bool Unload(IntPtr library)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
         public IntPtr GetSymbol(IntPtr library, string symbol)
         {
             throw new NotImplementedException();

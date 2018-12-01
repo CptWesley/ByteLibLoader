@@ -55,5 +55,21 @@ namespace ByteLibLoader.Tests
             Doubler doubler = (Doubler)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(Doubler));
             AssertThat(doubler(42)).IsEqualTo(84);
         }
+
+        /// <summary>
+        /// Checks that we can correctly unload a library.
+        /// </summary>
+        [Fact]
+        public void UnloadTest()
+        {
+            IntPtr libPtr = LibraryLoader.Load(_library);
+            IntPtr funcPtr = LibraryLoader.GetSymbol(libPtr, "doubler");
+            AssertThat((long)funcPtr).IsGreaterThan(0);
+            Doubler doubler = (Doubler)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(Doubler));
+            AssertThat(doubler(42)).IsEqualTo(84);
+            AssertThat(doubler(3)).IsEqualTo(6);
+            AssertThat(LibraryLoader.Unload(libPtr)).IsTrue();
+            AssertThat(LibraryLoader.Unload(libPtr)).IsFalse();
+        }
     }
 }
