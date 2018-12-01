@@ -69,7 +69,6 @@ namespace ByteLibLoader.Tests
             AssertThat(doubler(42)).IsEqualTo(84);
             AssertThat(doubler(3)).IsEqualTo(6);
             AssertThat(LibraryLoader.Unload(libPtr)).IsTrue();
-            AssertThat(LibraryLoader.Unload(libPtr)).IsFalse();
         }
     }
 }
