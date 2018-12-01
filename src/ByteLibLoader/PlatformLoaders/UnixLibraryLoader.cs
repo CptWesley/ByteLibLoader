@@ -34,15 +34,23 @@ namespace ByteLibLoader.PlatformLoaders
 
             string fileName = memfd ? $"/proc/{NativeMethods.getpid()}/fd/{fd}" : $"/dev/shm/{name}";
 
+            IntPtr libPtr;
             try
             {
-                return NativeMethods.dlopen(fileName, NativeMethods.RTLD_NOW);
+                libPtr = NativeMethods.dlopen(fileName, NativeMethods.RTLD_NOW);
             }
             catch (DllNotFoundException)
             {
                 // Some distributions require "libc6-dev" for "libdl" to be able to be resolved, but they might know "libdl.so.2".
-                return NativeMethods.dlopen2(fileName, NativeMethods.RTLD_NOW);
+                libPtr = NativeMethods.dlopen2(fileName, NativeMethods.RTLD_NOW);
             }
+
+            if (NativeMethods.close(fd) == -1)
+            {
+                return IntPtr.Zero;
+            }
+
+            return libPtr;
         }
 
         /// <inheritdoc/>
@@ -76,6 +84,9 @@ namespace ByteLibLoader.PlatformLoaders
 
             [DllImport("libc")]
             internal static extern int write(int fileDescriptor, byte[] data, int count);
+
+            [DllImport("libc")]
+            internal static extern int close(int fileDescriptor);
 
             [DllImport("libc")]
             internal static extern int getpid();
