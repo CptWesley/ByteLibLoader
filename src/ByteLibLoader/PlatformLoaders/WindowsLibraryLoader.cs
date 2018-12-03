@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Runtime.InteropServices;
+using ByteLibLoader.PlatformLoaders.PE;
 
 namespace ByteLibLoader.PlatformLoaders
 {
@@ -14,6 +16,28 @@ namespace ByteLibLoader.PlatformLoaders
         /// <inheritdoc/>
         public IntPtr Load(byte[] library)
         {
+            using (MemoryStream ms = new MemoryStream(library))
+            {
+                DosHeader dosHeader = DosHeader.FromStream(ms);
+                if (dosHeader.Magic != DosHeader.RequiredMagicNumber)
+                {
+                    return IntPtr.Zero;
+                }
+
+                ms.Position = dosHeader.Lfanew;
+                PeHeader peHeader = PeHeader.FromStream(ms);
+                if (peHeader.Signature != PeHeader.RequiredMagicNumber)
+                {
+                    return IntPtr.Zero;
+                }
+
+                OptionalHeader optionalHeader = OptionalHeader.FromStream(ms);
+                if (!OptionalHeader.RequiredMagicNumbers.Contains(optionalHeader.Magic))
+                {
+                    return IntPtr.Zero;
+                }
+            }
+
             return IntPtr.Zero;
         }
 
