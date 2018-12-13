@@ -78,7 +78,7 @@ namespace ByteLibLoader.PlatformLoaders.PE
         /// <summary>
         /// Gets or sets the image base address.
         /// </summary>
-        public uint ImageBase { get; set; }
+        public ulong ImageBase { get; set; }
 
         /// <summary>
         /// Gets or sets the section alignment.
@@ -153,22 +153,22 @@ namespace ByteLibLoader.PlatformLoaders.PE
         /// <summary>
         /// Gets or sets the size of the reserve stack.
         /// </summary>
-        public uint SizeOfStackReserve { get; set; }
+        public ulong SizeOfStackReserve { get; set; }
 
         /// <summary>
         /// Gets or sets the size of stack commit.
         /// </summary>
-        public uint SizeOfStackCommit { get; set; }
+        public ulong SizeOfStackCommit { get; set; }
 
         /// <summary>
         /// Gets or sets the size of heap reserve.
         /// </summary>
-        public uint SizeOfHeapReserve { get; set; }
+        public ulong SizeOfHeapReserve { get; set; }
 
         /// <summary>
         /// Gets or sets the size of stack heap commit.
         /// </summary>
-        public uint SizeOfHeapCommit { get; set; }
+        public ulong SizeOfHeapCommit { get; set; }
 
         /// <summary>
         /// Gets or sets the loader flags.
@@ -186,38 +186,41 @@ namespace ByteLibLoader.PlatformLoaders.PE
         /// <param name="stream">The stream to read from.</param>
         /// <returns>A new <see cref="OptionalHeader"/> instance read from the stream.</returns>
         public static OptionalHeader FromStream(Stream stream)
-            => new OptionalHeader()
-            {
-                Magic = stream.ReadUInt16(),
-                MajorLinkerVersion = stream.ReadUInt8(),
-                MinorLinkerVersion = stream.ReadUInt8(),
-                SizeOfCode = stream.ReadUInt32(),
-                SizeOfInitializedData = stream.ReadUInt32(),
-                SizeOfUninitializedData = stream.ReadUInt32(),
-                AddressOfEntryPoint = stream.ReadUInt32(),
-                BaseOfCode = stream.ReadUInt32(),
-                BaseOfData = stream.ReadUInt32(),
-                ImageBase = stream.ReadUInt32(),
-                SectionAlignment = stream.ReadUInt32(),
-                FileAlignment = stream.ReadUInt32(),
-                MajorOperatingSystemVersion = stream.ReadUInt8(),
-                MinorOperatingSystemVersion = stream.ReadUInt8(),
-                MajorImageVersion = stream.ReadUInt8(),
-                MinorImageVersion = stream.ReadUInt8(),
-                MajorSubsystemVersion = stream.ReadUInt8(),
-                MinorSubsystemVersion = stream.ReadUInt8(),
-                Win32VersionValue = stream.ReadUInt32(),
-                SizeOfImage = stream.ReadUInt32(),
-                SizeOfHeaders = stream.ReadUInt32(),
-                Checksum = stream.ReadUInt32(),
-                Subsystem = stream.ReadUInt16(),
-                DllCharacteristics = stream.ReadUInt16(),
-                SizeOfStackReserve = stream.ReadUInt32(),
-                SizeOfStackCommit = stream.ReadUInt32(),
-                SizeOfHeapReserve = stream.ReadUInt32(),
-                SizeOfHeapCommit = stream.ReadUInt32(),
-                LoaderFlags = stream.ReadUInt32(),
-                NumberOfRvaAndSizes = stream.ReadUInt32()
-            };
+        {
+            OptionalHeader header = new OptionalHeader();
+
+            header.Magic = stream.ReadUInt16();
+            header.MajorLinkerVersion = stream.ReadUInt8();
+            header.MinorLinkerVersion = stream.ReadUInt8();
+            header.SizeOfCode = stream.ReadUInt32();
+            header.SizeOfInitializedData = stream.ReadUInt32();
+            header.SizeOfUninitializedData = stream.ReadUInt32();
+            header.AddressOfEntryPoint = stream.ReadUInt32();
+            header.BaseOfCode = stream.ReadUInt32();
+            header.BaseOfData = stream.ReadUInt32();
+            header.ImageBase = (header.Magic == Hdr64Magic) ? stream.ReadUInt64() : stream.ReadUInt32();
+            header.SectionAlignment = stream.ReadUInt32();
+            header.FileAlignment = stream.ReadUInt32();
+            header.MajorOperatingSystemVersion = stream.ReadUInt8();
+            header.MinorOperatingSystemVersion = stream.ReadUInt8();
+            header.MajorImageVersion = stream.ReadUInt8();
+            header.MinorImageVersion = stream.ReadUInt8();
+            header.MajorSubsystemVersion = stream.ReadUInt8();
+            header.MinorSubsystemVersion = stream.ReadUInt8();
+            header.Win32VersionValue = stream.ReadUInt32();
+            header.SizeOfImage = stream.ReadUInt32();
+            header.SizeOfHeaders = stream.ReadUInt32();
+            header.Checksum = stream.ReadUInt32();
+            header.Subsystem = stream.ReadUInt16();
+            header.DllCharacteristics = stream.ReadUInt16();
+            header.SizeOfStackReserve = (header.Magic == Hdr64Magic) ? stream.ReadUInt64() : stream.ReadUInt32();
+            header.SizeOfStackCommit = (header.Magic == Hdr64Magic) ? stream.ReadUInt64() : stream.ReadUInt32();
+            header.SizeOfHeapReserve = (header.Magic == Hdr64Magic) ? stream.ReadUInt64() : stream.ReadUInt32();
+            header.SizeOfHeapCommit = (header.Magic == Hdr64Magic) ? stream.ReadUInt64() : stream.ReadUInt32();
+            header.LoaderFlags = stream.ReadUInt32();
+            header.NumberOfRvaAndSizes = stream.ReadUInt32();
+
+            return header;
+        }
     }
 }
