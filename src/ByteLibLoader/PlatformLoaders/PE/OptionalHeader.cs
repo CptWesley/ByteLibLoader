@@ -93,32 +93,32 @@ namespace ByteLibLoader.PlatformLoaders.PE
         /// <summary>
         /// Gets or sets the major operating system version.
         /// </summary>
-        public byte MajorOperatingSystemVersion { get; set; }
+        public ushort MajorOperatingSystemVersion { get; set; }
 
         /// <summary>
         /// Gets or sets the minor operating system version.
         /// </summary>
-        public byte MinorOperatingSystemVersion { get; set; }
+        public ushort MinorOperatingSystemVersion { get; set; }
 
         /// <summary>
         /// Gets or sets the major image version.
         /// </summary>
-        public byte MajorImageVersion { get; set; }
+        public ushort MajorImageVersion { get; set; }
 
         /// <summary>
         /// Gets or sets the minor image version.
         /// </summary>
-        public byte MinorImageVersion { get; set; }
+        public ushort MinorImageVersion { get; set; }
 
         /// <summary>
         /// Gets or sets the major subsystem version.
         /// </summary>
-        public byte MajorSubsystemVersion { get; set; }
+        public ushort MajorSubsystemVersion { get; set; }
 
         /// <summary>
         /// Gets or sets the minor subsystem version.
         /// </summary>
-        public byte MinorSubsystemVersion { get; set; }
+        public ushort MinorSubsystemVersion { get; set; }
 
         /// <summary>
         /// Gets or sets the win32 version value.
@@ -342,16 +342,16 @@ namespace ByteLibLoader.PlatformLoaders.PE
             header.SizeOfUninitializedData = stream.ReadUInt32();
             header.AddressOfEntryPoint = stream.ReadUInt32();
             header.BaseOfCode = stream.ReadUInt32();
-            header.BaseOfData = stream.ReadUInt32();
+            header.BaseOfData = (header.Magic == Hdr64Magic) ? 0 : stream.ReadUInt32();
             header.ImageBase = (header.Magic == Hdr64Magic) ? stream.ReadUInt64() : stream.ReadUInt32();
             header.SectionAlignment = stream.ReadUInt32();
             header.FileAlignment = stream.ReadUInt32();
-            header.MajorOperatingSystemVersion = stream.ReadUInt8();
-            header.MinorOperatingSystemVersion = stream.ReadUInt8();
-            header.MajorImageVersion = stream.ReadUInt8();
-            header.MinorImageVersion = stream.ReadUInt8();
-            header.MajorSubsystemVersion = stream.ReadUInt8();
-            header.MinorSubsystemVersion = stream.ReadUInt8();
+            header.MajorOperatingSystemVersion = stream.ReadUInt16();
+            header.MinorOperatingSystemVersion = stream.ReadUInt16();
+            header.MajorImageVersion = stream.ReadUInt16();
+            header.MinorImageVersion = stream.ReadUInt16();
+            header.MajorSubsystemVersion = stream.ReadUInt16();
+            header.MinorSubsystemVersion = stream.ReadUInt16();
             header.Win32VersionValue = stream.ReadUInt32();
             header.SizeOfImage = stream.ReadUInt32();
             header.SizeOfHeaders = stream.ReadUInt32();
