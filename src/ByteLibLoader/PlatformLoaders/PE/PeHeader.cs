@@ -51,7 +51,7 @@ namespace ByteLibLoader.PlatformLoaders.PE
         /// <summary>
         /// Gets or sets the characteristics.
         /// </summary>
-        public Characteristics Characteristics { get; set; }
+        public PeHeaderCharacteristics Characteristics { get; set; }
 
         /// <summary>
         /// Creates a new <see cref="PeHeader"/> instance from a stream.
@@ -68,7 +68,7 @@ namespace ByteLibLoader.PlatformLoaders.PE
                 PointerToSymbolTable = stream.ReadUInt32(),
                 NumberOfSymbolTable = stream.ReadUInt32(),
                 SizeOfOptionalHeader = stream.ReadUInt16(),
-                Characteristics = (Characteristics)stream.ReadUInt16(),
+                Characteristics = (PeHeaderCharacteristics)stream.ReadUInt16(),
             };
     }
 }
