@@ -30,6 +30,8 @@ namespace ByteLibLoader.PlatformLoaders.PE
         /// </summary>
         public static readonly ReadOnlyCollection<ushort> RequiredMagicNumbers = Array.AsReadOnly(new[] { Hdr64Magic, Hdr32Magic, HdrMagic });
 
+        private DataDirectory[] dataDirectories;
+
         /// <summary>
         /// Gets or sets the found magic number.
         /// </summary>
@@ -181,149 +183,149 @@ namespace ByteLibLoader.PlatformLoaders.PE
         public uint NumberOfRvaAndSizes { get; set; }
 
         /// <summary>
-        /// Gets or sets the address of the export table.
+        /// Gets the address of the export table.
         /// </summary>
-        public uint ExportTable { get; set; }
+        public uint ExportTable => dataDirectories[0].Address;
 
         /// <summary>
-        /// Gets or sets the size of the export table.
+        /// Gets the size of the export table.
         /// </summary>
-        public uint SizeOfExportTable { get; set; }
+        public uint SizeOfExportTable => dataDirectories[0].Size;
 
         /// <summary>
-        /// Gets or sets the address of the import table.
+        /// Gets the address of the import table.
         /// </summary>
-        public uint ImportTable { get; set; }
+        public uint ImportTable => dataDirectories[1].Address;
 
         /// <summary>
-        /// Gets or sets the size of the import table.
+        /// Gets the size of the import table.
         /// </summary>
-        public uint SizeOfImportTable { get; set; }
+        public uint SizeOfImportTable => dataDirectories[1].Size;
 
         /// <summary>
-        /// Gets or sets the address of the resource table.
+        /// Gets the address of the resource table.
         /// </summary>
-        public uint ResourceTable { get; set; }
+        public uint ResourceTable => dataDirectories[2].Address;
 
         /// <summary>
-        /// Gets or sets the size of the resource table.
+        /// Gets the size of the resource table.
         /// </summary>
-        public uint SizeOfResourceTable { get; set; }
+        public uint SizeOfResourceTable => dataDirectories[2].Size;
 
         /// <summary>
-        /// Gets or sets the address of the exception table.
+        /// Gets the address of the exception table.
         /// </summary>
-        public uint ExceptionTable { get; set; }
+        public uint ExceptionTable => dataDirectories[3].Address;
 
         /// <summary>
-        /// Gets or sets the size of the exception table.
+        /// Gets the size of the exception table.
         /// </summary>
-        public uint SizeOfExceptionTable { get; set; }
+        public uint SizeOfExceptionTable => dataDirectories[3].Size;
 
         /// <summary>
-        /// Gets or sets the address of the certificate table.
+        /// Gets the address of the certificate table.
         /// </summary>
-        public uint CertificateTable { get; set; }
+        public uint CertificateTable => dataDirectories[4].Address;
 
         /// <summary>
-        /// Gets or sets the size of the certificate table.
+        /// Gets the size of the certificate table.
         /// </summary>
-        public uint SizeOfCertificateTable { get; set; }
+        public uint SizeOfCertificateTable => dataDirectories[4].Size;
 
         /// <summary>
-        /// Gets or sets the address of the base relocation table.
+        /// Gets the address of the base relocation table.
         /// </summary>
-        public uint BaseRelocationTable { get; set; }
+        public uint BaseRelocationTable => dataDirectories[5].Address;
 
         /// <summary>
-        /// Gets or sets the size of the base relocation table.
+        /// Gets the size of the base relocation table.
         /// </summary>
-        public uint SizeOfBaseRelocationTable { get; set; }
+        public uint SizeOfBaseRelocationTable => dataDirectories[5].Size;
 
         /// <summary>
-        /// Gets or sets the address of the debug information.
+        /// Gets the address of the debug information.
         /// </summary>
-        public uint Debug { get; set; }
+        public uint Debug => dataDirectories[6].Address;
 
         /// <summary>
-        /// Gets or sets the size of the debug information.
+        /// Gets the size of the debug information.
         /// </summary>
-        public uint SizeOfDebug { get; set; }
+        public uint SizeOfDebug => dataDirectories[6].Size;
 
         /// <summary>
-        /// Gets or sets the address of the architecture data.
+        /// Gets the address of the architecture data.
         /// </summary>
-        public uint ArchitectureData { get; set; }
+        public uint ArchitectureData => dataDirectories[7].Address;
 
         /// <summary>
-        /// Gets or sets the size of the architecture data.
+        /// Gets the size of the architecture data.
         /// </summary>
-        public uint SizeOfArchitectureData { get; set; }
+        public uint SizeOfArchitectureData => dataDirectories[7].Size;
 
         /// <summary>
-        /// Gets or sets the address of the global pointer (has no size).
+        /// Gets the address of the global pointer (has no size).
         /// </summary>
-        public uint GlobalPtr { get; set; }
+        public uint GlobalPtr => dataDirectories[8].Address;
 
         /// <summary>
-        /// Gets or sets the address of the TLS table.
+        /// Gets the address of the TLS table.
         /// </summary>
-        public uint TlsTable { get; set; }
+        public uint TlsTable => dataDirectories[9].Address;
 
         /// <summary>
-        /// Gets or sets the size of the TLS table.
+        /// Gets the size of the TLS table.
         /// </summary>
-        public uint SizeOfTlsTable { get; set; }
+        public uint SizeOfTlsTable => dataDirectories[9].Size;
 
         /// <summary>
-        /// Gets or sets the address of the load config table.
+        /// Gets the address of the load config table.
         /// </summary>
-        public uint LoadConfigTable { get; set; }
+        public uint LoadConfigTable => dataDirectories[10].Address;
 
         /// <summary>
-        /// Gets or sets the size of the load config table.
+        /// Gets the size of the load config table.
         /// </summary>
-        public uint SizeOfLoadConfigTable { get; set; }
+        public uint SizeOfLoadConfigTable => dataDirectories[10].Size;
 
         /// <summary>
-        /// Gets or sets the address of the bound import.
+        /// Gets the address of the bound import.
         /// </summary>
-        public uint BoundImport { get; set; }
+        public uint BoundImport => dataDirectories[11].Address;
 
         /// <summary>
-        /// Gets or sets the size of the bound import.
+        /// Gets the size of the bound import.
         /// </summary>
-        public uint SizeOfBoundImport { get; set; }
+        public uint SizeOfBoundImport => dataDirectories[11].Size;
 
         /// <summary>
-        /// Gets or sets the address of the import address table.
+        /// Gets the address of the import address table.
         /// </summary>
-        public uint ImportAddressTable { get; set; }
+        public uint ImportAddressTable => dataDirectories[12].Address;
 
         /// <summary>
-        /// Gets or sets the size of the import address table.
+        /// Gets the size of the import address table.
         /// </summary>
-        public uint SizeOfImportAddressTable { get; set; }
+        public uint SizeOfImportAddressTable => dataDirectories[12].Size;
 
         /// <summary>
-        /// Gets or sets the address of the delay import descriptor.
+        /// Gets the address of the delay import descriptor.
         /// </summary>
-        public uint DelayImportDescriptor { get; set; }
+        public uint DelayImportDescriptor => dataDirectories[13].Address;
 
         /// <summary>
-        /// Gets or sets the size of the delay import descriptor.
+        /// Gets the size of the delay import descriptor.
         /// </summary>
-        public uint SizeOfDelayImportDescriptor { get; set; }
+        public uint SizeOfDelayImportDescriptor => dataDirectories[13].Size;
 
         /// <summary>
-        /// Gets or sets the address of the CLR runtime header.
+        /// Gets the address of the CLR runtime header.
         /// </summary>
-        public uint ClrRuntimeHJeader { get; set; }
+        public uint ClrRuntimeHeader => dataDirectories[14].Address;
 
         /// <summary>
-        /// Gets or sets the size of the CLR runtime header.
+        /// Gets the size of the CLR runtime header.
         /// </summary>
-        public uint SizeOfClrRuntimeHJeaderr { get; set; }
+        public uint SizeOfClrRuntimeHeader => dataDirectories[14].Size;
 
         /// <summary>
         /// Creates a new <see cref="OptionalHeader"/> instance from a stream.
@@ -364,36 +366,12 @@ namespace ByteLibLoader.PlatformLoaders.PE
             header.SizeOfHeapCommit = (header.Magic == Hdr64Magic) ? stream.ReadUInt64() : stream.ReadUInt32();
             header.LoaderFlags = stream.ReadUInt32();
             header.NumberOfRvaAndSizes = stream.ReadUInt32();
-            header.ExportTable = stream.ReadUInt32();
-            header.SizeOfExportTable = stream.ReadUInt32();
-            header.ImportTable = stream.ReadUInt32();
-            header.SizeOfImportTable = stream.ReadUInt32();
-            header.ResourceTable = stream.ReadUInt32();
-            header.SizeOfResourceTable = stream.ReadUInt32();
-            header.ExceptionTable = stream.ReadUInt32();
-            header.SizeOfExceptionTable = stream.ReadUInt32();
-            header.CertificateTable = stream.ReadUInt32();
-            header.SizeOfCertificateTable = stream.ReadUInt32();
-            header.BaseRelocationTable = stream.ReadUInt32();
-            header.SizeOfBaseRelocationTable = stream.ReadUInt32();
-            header.Debug = stream.ReadUInt32();
-            header.SizeOfDebug = stream.ReadUInt32();
-            header.ArchitectureData = stream.ReadUInt32();
-            header.SizeOfArchitectureData = stream.ReadUInt32();
-            header.GlobalPtr = stream.ReadUInt32();
-            stream.ReadUInt32(); // Zeroes filled.
-            header.TlsTable = stream.ReadUInt32();
-            header.SizeOfTlsTable = stream.ReadUInt32();
-            header.LoadConfigTable = stream.ReadUInt32();
-            header.SizeOfLoadConfigTable = stream.ReadUInt32();
-            header.BoundImport = stream.ReadUInt32();
-            header.SizeOfBoundImport = stream.ReadUInt32();
-            header.ImportAddressTable = stream.ReadUInt32();
-            header.SizeOfImportAddressTable = stream.ReadUInt32();
-            header.DelayImportDescriptor = stream.ReadUInt32();
-            header.SizeOfDelayImportDescriptor = stream.ReadUInt32();
-            header.ClrRuntimeHJeader = stream.ReadUInt32();
-            header.SizeOfClrRuntimeHJeaderr = stream.ReadUInt32();
+
+            header.dataDirectories = new DataDirectory[header.NumberOfRvaAndSizes];
+            for (int i = 0; i < header.NumberOfRvaAndSizes; i++)
+            {
+                header.dataDirectories[i] = DataDirectory.FromStream(stream);
+            }
 
             return header;
         }
