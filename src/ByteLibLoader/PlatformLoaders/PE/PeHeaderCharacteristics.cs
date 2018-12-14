@@ -6,7 +6,7 @@ namespace ByteLibLoader.PlatformLoaders.PE
     /// Flags for PE header characteristics.
     /// </summary>
     [Flags]
-    public enum Characteristics
+    public enum PeHeaderCharacteristics
     {
         /// <summary>
         /// Indicates that the relocation information was stripped from the file.
