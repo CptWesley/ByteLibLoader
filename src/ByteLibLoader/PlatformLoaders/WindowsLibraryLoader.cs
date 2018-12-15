@@ -19,7 +19,7 @@ namespace ByteLibLoader.PlatformLoaders
             {
                 PeFile pe = PeFile.Parse(library);
                 IntPtr image = AllocateImage(pe.OptionalHeader.ImageBase, pe.OptionalHeader.SizeOfImage);
-                AllocateSections(image, pe, library);
+                CopySections(image, pe, library);
 
                 return image;
             }
@@ -43,7 +43,7 @@ namespace ByteLibLoader.PlatformLoaders
         private IntPtr AllocateSection(IntPtr basePointer, ulong virtualAddress, uint size)
             => NativeMethods.VirtualAlloc(new IntPtr(basePointer.ToInt64() + (long)virtualAddress), new UIntPtr(size), NativeMethods.AllocationTypeCommit, NativeMethods.MemoryProtectionReadWrite);
 
-        private void AllocateSections(IntPtr basePointer, PeFile pe, byte[] library)
+        private void CopySections(IntPtr basePointer, PeFile pe, byte[] library)
         {
             for (int i = 0; i < pe.SectionHeaders.Length; i++)
             {
