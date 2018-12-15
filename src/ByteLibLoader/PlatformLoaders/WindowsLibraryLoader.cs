@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Runtime.InteropServices;
 using ByteLibLoader.PlatformLoaders.PE;
 
@@ -16,61 +15,17 @@ namespace ByteLibLoader.PlatformLoaders
         /// <inheritdoc/>
         public IntPtr Load(byte[] library)
         {
-            using (MemoryStream ms = new MemoryStream(library))
+            try
             {
-                DosHeader dosHeader = DosHeader.FromStream(ms);
-                if (dosHeader.Magic != DosHeader.RequiredMagicNumber)
-                {
-                    return IntPtr.Zero;
-                }
+                PeFile pe = PeFile.Parse(library);
+                IntPtr image = AllocateImage(pe.OptionalHeader.ImageBase, pe.OptionalHeader.SizeOfImage);
+                AllocateSections(image, pe, library);
 
-                ms.Position = dosHeader.Lfanew;
-                PeHeader peHeader = PeHeader.FromStream(ms);
-                if (peHeader.Signature != PeHeader.RequiredMagicNumber)
-                {
-                    return IntPtr.Zero;
-                }
-
-                OptionalHeader optionalHeader = OptionalHeader.FromStream(ms);
-                if (!OptionalHeader.RequiredMagicNumbers.Contains(optionalHeader.Magic))
-                {
-                    return IntPtr.Zero;
-                }
-
-                IntPtr memory = AllocateImage(optionalHeader.ImageBase, optionalHeader.SizeOfImage);
-                if (memory == IntPtr.Zero)
-                {
-                    return IntPtr.Zero;
-                }
-
-                SectionHeader[] sectionHeaders = new SectionHeader[peHeader.NumberOfSections];
-                for (int i = 0; i < peHeader.NumberOfSections; i++)
-                {
-                    SectionHeader sectionHeader = SectionHeader.FromStream(ms);
-                    sectionHeaders[i] = sectionHeader;
-                    uint size = sectionHeader.SizeOfRawData;
-                    if (size == 0)
-                    {
-                        if (sectionHeader.Characteristics.HasFlag(SectionHeaderCharacteristics.ContainsInitializedData))
-                        {
-                            size = optionalHeader.SizeOfInitializedData;
-                        }
-                        else if (sectionHeader.Characteristics.HasFlag(SectionHeaderCharacteristics.ContainsUninitializedData))
-                        {
-                            size = optionalHeader.SizeOfUninitializedData;
-                        }
-                    }
-
-                    IntPtr section = AllocateSection(memory, sectionHeader.VirtualAddress, sectionHeader.SizeOfRawData);
-                    if (section == IntPtr.Zero)
-                    {
-                        return IntPtr.Zero;
-                    }
-
-                    Marshal.Copy(library, (int)sectionHeader.PointerToRawData, section, (int)sectionHeader.SizeOfRawData);
-                }
-
-                return memory;
+                return image;
+            }
+            catch (PeParsingException)
+            {
+                return IntPtr.Zero;
             }
         }
 
@@ -87,6 +42,34 @@ namespace ByteLibLoader.PlatformLoaders
 
         private IntPtr AllocateSection(IntPtr basePointer, ulong virtualAddress, uint size)
             => NativeMethods.VirtualAlloc(new IntPtr(basePointer.ToInt64() + (long)virtualAddress), new UIntPtr(size), NativeMethods.AllocationTypeCommit, NativeMethods.MemoryProtectionReadWrite);
+
+        private void AllocateSections(IntPtr basePointer, PeFile pe, byte[] library)
+        {
+            for (int i = 0; i < pe.SectionHeaders.Length; i++)
+            {
+                SectionHeader sectionHeader = pe.SectionHeaders[i];
+                uint size = sectionHeader.SizeOfRawData;
+                if (size == 0)
+                {
+                    if (sectionHeader.Characteristics.HasFlag(SectionHeaderCharacteristics.ContainsInitializedData))
+                    {
+                        size = pe.OptionalHeader.SizeOfInitializedData;
+                    }
+                    else if (sectionHeader.Characteristics.HasFlag(SectionHeaderCharacteristics.ContainsUninitializedData))
+                    {
+                        size = pe.OptionalHeader.SizeOfUninitializedData;
+                    }
+                }
+
+                IntPtr section = AllocateSection(basePointer, sectionHeader.VirtualAddress, sectionHeader.SizeOfRawData);
+                if (section == IntPtr.Zero)
+                {
+                    throw new PeParsingException("Failed to allocate memory for the sections.");
+                }
+
+                Marshal.Copy(library, (int)sectionHeader.PointerToRawData, section, (int)sectionHeader.SizeOfRawData);
+            }
+        }
 
         private static class NativeMethods
         {
