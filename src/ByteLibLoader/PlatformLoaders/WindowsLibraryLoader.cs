@@ -19,6 +19,7 @@ namespace ByteLibLoader.PlatformLoaders
             {
                 PeFile pe = PeFile.Parse(library);
                 IntPtr image = AllocateImage(pe.OptionalHeader.ImageBase, pe.OptionalHeader.SizeOfImage);
+                CopyHeaders(image, pe, library);
                 CopySections(image, pe, library);
 
                 return image;
@@ -40,8 +41,16 @@ namespace ByteLibLoader.PlatformLoaders
         private IntPtr AllocateImage(ulong imageBase, uint imageSize)
             => NativeMethods.VirtualAlloc(new IntPtr((long)imageBase), new UIntPtr(imageSize), NativeMethods.AllocationTypeReserve, NativeMethods.MemoryProtectionReadWrite);
 
-        private IntPtr AllocateSection(IntPtr basePointer, ulong virtualAddress, uint size)
-            => NativeMethods.VirtualAlloc(new IntPtr(basePointer.ToInt64() + (long)virtualAddress), new UIntPtr(size), NativeMethods.AllocationTypeCommit, NativeMethods.MemoryProtectionReadWrite);
+        private void CopyHeaders(IntPtr basePointer, PeFile pe, byte[] library)
+        {
+            IntPtr headers = NativeMethods.VirtualAlloc(basePointer, new UIntPtr(pe.OptionalHeader.SizeOfHeaders), NativeMethods.AllocationTypeCommit, NativeMethods.MemoryProtectionReadWrite);
+            if (headers != basePointer)
+            {
+                throw new PeParsingException("Failed to copy headers to target.");
+            }
+
+            Marshal.Copy(library, 0, headers, (int)pe.OptionalHeader.SizeOfHeaders);
+        }
 
         private void CopySections(IntPtr basePointer, PeFile pe, byte[] library)
         {
@@ -61,8 +70,9 @@ namespace ByteLibLoader.PlatformLoaders
                     }
                 }
 
-                IntPtr section = AllocateSection(basePointer, sectionHeader.VirtualAddress, sectionHeader.SizeOfRawData);
-                if (section == IntPtr.Zero)
+                IntPtr sectionTarget = new IntPtr(basePointer.ToInt64() + sectionHeader.VirtualAddress);
+                IntPtr section = NativeMethods.VirtualAlloc(sectionTarget, new UIntPtr(size), NativeMethods.AllocationTypeCommit, NativeMethods.MemoryProtectionExecuteReadWrite);
+                if (section == IntPtr.Zero || section != sectionTarget)
                 {
                     throw new PeParsingException("Failed to allocate memory for the sections.");
                 }
@@ -76,6 +86,7 @@ namespace ByteLibLoader.PlatformLoaders
             internal const uint AllocationTypeReserve = 0x2000;
             internal const uint AllocationTypeCommit = 0x1000;
             internal const uint MemoryProtectionReadWrite = 0x04;
+            internal const uint MemoryProtectionExecuteReadWrite = 0x40;
 
             [DllImport("kernel32")]
             [return: MarshalAs(UnmanagedType.Bool)]
